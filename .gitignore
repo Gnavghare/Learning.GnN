@@ -26,6 +26,7 @@ var/
 *.pyc
 db.sqlite3
 media/
+staticfiles/
 
 # Virtual Environment
 venv/
@@ -39,3 +40,6 @@ ENV/
 
 # Windows
 Thumbs.db
+
+# Environment Variables
+.env
