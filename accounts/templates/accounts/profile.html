@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Profile Information -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex items-start space-x-6">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}" class="w-32 h-32 rounded-full object-cover">
+                {% else %}
+                    <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center">
+                        <i class="fas fa-user text-4xl text-gray-400"></i>
+                    </div>
+                {% endif %}
+                <div class="flex-1">
+                    <h1 class="text-2xl font-bold mb-2">{{ user.get_full_name|default:user.username }}</h1>
+                    <p class="text-gray-600 mb-4">{{ user.email }}</p>
+                    {% if user.profile.bio %}
+                        <p class="text-gray-700">{{ user.profile.bio }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Edit Form -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
+            <form method="post" enctype="multipart/form-data" class="space-y-4">
+                {% csrf_token %}
+                {{ profile_form|crispy }}
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+
+        <!-- Enrolled Courses -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold mb-4">My Enrolled Courses</h2>
+            {% if enrolled_courses %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for course in enrolled_courses %}
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center space-x-4">
+                            {% if course.image %}
+                                <img src="{{ course.image.url }}" alt="{{ course.title }}" class="w-16 h-16 object-cover rounded">
+                            {% else %}
+                                <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
+                                    <i class="fas fa-book text-gray-400"></i>
+                                </div>
+                            {% endif %}
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-sm mb-1">{{ course.title }}</h3>
+                                <p class="text-xs text-gray-600">{{ course.category.name }}</p>
+                                <div class="mt-2">
+                                    <a href="{% url 'courses:course_detail' course.slug %}" 
+                                       class="text-xs text-blue-500 hover:underline">Continue Learning</a>
+                                    <a href="{% url 'accounts:unenroll_course' course.id %}" 
+                                       class="text-xs text-red-500 hover:underline ml-4">Unenroll</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600">You haven't enrolled in any courses yet.</p>
+                <a href="{% url 'courses:course_list' %}" class="inline-block mt-4 text-blue-500 hover:underline">
+                    Browse Available Courses
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

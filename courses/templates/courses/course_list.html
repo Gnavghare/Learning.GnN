@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Course List - Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-4">
+    <div class="mb-4">
+        <h2 class="text-xl font-bold mb-2">Browse Courses</h2>
+        <div class="flex flex-wrap gap-1.5 mb-4">
+            <a href="{% url 'courses:course_list' %}" class="text-xs px-2 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-600 transition-colors">All</a>
+            {% for category in categories %}
+            <a href="{% url 'courses:course_list' %}?category={{ category.id }}" 
+               class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-sm hover:bg-gray-200 transition-colors flex items-center">
+                {% if category.icon %}<i class="fas {{ category.icon }} mr-1 text-blue-500"></i>{% endif %}
+                {{ category.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        {% for course in courses %}
+        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100" style="max-width: 240px;">
+            {% if course.image %}
+            <div class="relative pt-[70%] border-b border-gray-100">
+                <img src="{{ course.image.url }}" alt="{{ course.title }}" 
+                     class="absolute top-0 left-0 w-full h-full object-contain bg-gray-50 p-2">
+            </div>
+            {% endif %}
+            <div class="p-3 space-y-2">
+                <div class="flex items-center gap-1.5 mb-1">
+                    <span class="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-sm">{{ course.category.name }}</span>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-sm">{{ course.difficulty_level|title }}</span>
+                </div>
+                <h3 class="text-sm font-bold line-clamp-2 min-h-[2.5rem]">{{ course.title }}</h3>
+                <p class="text-xs text-gray-600 line-clamp-2 min-h-[2rem]">{{ course.description|truncatewords:10 }}</p>
+                <div class="pt-2 border-t border-gray-100">
+                    <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                        <span class="flex items-center">
+                            <i class="fas fa-clock mr-1"></i>
+                            {{ course.duration }}
+                        </span>
+                        <span class="flex items-center">
+                            <i class="fas fa-book-open mr-1"></i>
+                            {{ course.notes.count }} lessons
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <i class="fas fa-user-circle text-gray-400 mr-1"></i>
+                            <span class="text-xs text-gray-600">{{ course.instructor }}</span>
+                        </div>
+                        <a href="{% url 'courses:course_detail' course.slug %}" 
+                           class="text-xs px-2 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-600 transition-colors">
+                            View Course
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-6">
+            <p class="text-sm text-gray-500">No courses found.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
