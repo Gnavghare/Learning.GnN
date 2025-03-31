@@ -1,4 +1,5 @@
 #!/bin/bash
-set -e
-python3.9 -m pip install -r requirements.txt
-python3.9 manage.py collectstatic --noinput --clear
+echo "Installing dependencies..."
+python -m pip install -r requirements.txt
+echo "Running collectstatic..."
+python manage.py collectstatic --noinput
